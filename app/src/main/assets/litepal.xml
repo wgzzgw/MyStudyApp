@@ -1,0 +1,9 @@
+<litepal>
+    <dbname value="city_listview"/>
+    <version value="1"/>
+    <list>
+        <mapping class="com.example.db.Province"/>
+        <mapping class="com.example.db.City"/>
+        <mapping class="com.example.db.Country"/>
+    </list>
+</litepal>

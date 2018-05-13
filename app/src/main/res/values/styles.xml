@@ -1,0 +1,61 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="ActionBarItem">
+        <item name="android:layout_marginTop">7dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColor">@color/action_bar_txt_color</item>
+        <item name="android:background">#fff</item>
+        <item name="android:textSize">@dimen/text_minimum_size</item>
+    </style>
+    <!--信息父布局样式-->
+    <style name="SettingItemStyle">
+        <item name="android:background">#fff</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">46.67dp</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <!--信息样式-->
+    <style name="info_left_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">14dp</item>
+        <item name="android:textColor">#FF2C2C2C</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+    <!--对话框配置-->
+    <style name="dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item><!--边框-->
+        <item name="android:windowIsFloating">true</item><!--是否浮现在activity之上-->
+        <item name="android:windowIsTranslucent">false</item><!--半透明-->
+        <item name="android:windowNoTitle">true</item><!--无标题-->
+        <item name="android:windowBackground">@android:color/transparent</item><!--背景透明-->
+        <item name="android:backgroundDimEnabled">true</item><!--模糊-->
+    </style>
+    <style name="loading_dialog" parent="dialog">
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+    <style name="jmui_default_dialog_style" parent="dialog">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:radius">5dp</item>
+    </style>
+    <style name="info_left_txt_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">40dp</item>
+        <item name="android:textColor">#FF2C2C2C</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+</resources>

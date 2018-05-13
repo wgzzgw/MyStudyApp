@@ -1,0 +1,57 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.1"
+    defaultConfig {
+        applicationId "com.example"//JMessage注册的包名
+        minSdkVersion 17
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            //选择要添加的对应cpu类型的.so库。
+            abiFilters 'armeabi', 'armeabi-v7a', 'armeabi-v8a','x86'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+        }
+        manifestPlaceholders = [
+                JPUSH_PKGNAME : applicationId,
+                JPUSH_APPKEY : "17c7d9fbef7e70756a70de78", //JMessage上注册的包名对应的appkey.
+                JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
+        ]
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.0.0-alpha1'
+    //布局百分比库
+    compile 'com.android.support:percent:25.0.0'
+    compile 'com.android.support:design:25.0.0'
+    testCompile 'junit:junit:4.12'
+    compile 'cn.jiguang.sdk:jmessage:2.6.0'  // JMessage 2.6.0 版本
+    compile 'cn.jiguang.sdk:jcore:1.2.0'  // JCore 1.2.0 版本
+    //glide图片加载库
+    compile  'com.github.bumptech.glide:glide:3.7.0'
+    //选择器
+    compile 'com.contrarywind:Android-PickerView:3.2.4'
+    //litepal数据库框架
+    compile 'org.litepal.android:core:1.4.1'
+    //网络请求库
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    //glide图片变换库,对图片进行裁剪、模糊、滤镜等处理
+    compile  'jp.wasabeef:glide-transformations:2.0.1'
+    //七牛库
+    compile 'com.qiniu:qiniu-android-sdk:7.3.+'
+    compile 'com.qiniu:happy-dns:0.2.10'
+}

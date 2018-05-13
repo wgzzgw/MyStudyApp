@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+帧动画的自动执行:oneshot 。
+如果为true，表示动画只播放一次停止在最后一帧上，
+如果设置为false表示动画循环播放。
+-->
+<animation-list
+    android:id="@+id/loading_animation"
+    android:oneshot="false"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:duration="@integer/loading_frame_interval" android:drawable="@drawable/loading_1" />
+    <item android:duration="@integer/loading_frame_interval" android:drawable="@drawable/loading_2" />
+    <item android:duration="@integer/loading_frame_interval" android:drawable="@drawable/loading_3" />
+    <item android:duration="@integer/loading_frame_interval" android:drawable="@drawable/loading_4" />
+    <item android:duration="@integer/loading_frame_interval" android:drawable="@drawable/loading_5" />
+    <item android:duration="@integer/loading_frame_interval" android:drawable="@drawable/loading_6" />
+    <item android:duration="@integer/loading_frame_interval" android:drawable="@drawable/loading_7" />
+    <item android:duration="@integer/loading_frame_interval" android:drawable="@drawable/loading_8" />
+    <item android:duration="@integer/loading_frame_interval" android:drawable="@drawable/loading_9" />
+    <item android:duration="@integer/loading_frame_interval" android:drawable="@drawable/loading_10" />
+    <item android:duration="@integer/loading_frame_interval" android:drawable="@drawable/loading_11" />
+    <item android:duration="@integer/loading_frame_interval" android:drawable="@drawable/loading_12" />
+</animation-list>

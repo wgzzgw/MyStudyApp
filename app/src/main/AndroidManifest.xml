@@ -10,19 +10,26 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".mystudyapp.MainActivity" />
-        <activity android:name=".loginandsign.SignAndLogin">
+        <activity android:name=".loginandsign.SignAndLogin"
+            android:theme="@style/BaseThemes">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ResetPasswordActivity" />
+        <activity android:name=".activity.ResetPasswordActivity"
+            android:theme="@style/BaseThemes"
+            />
         <activity android:name=".activity.BaseActivity" />
-        <activity android:name=".activity.ResetGenderActivity" />
-        <activity android:name=".activity.ResetAreaActivity" />
-        <activity android:name=".activity.PersonalActivity"></activity>
-        <activity android:name=".activity.NickSignActivity"/>
+        <activity android:name=".activity.ResetGenderActivity"
+            android:theme="@style/BaseThemes"/>
+        <activity android:name=".activity.ResetAreaActivity"
+            android:theme="@style/BaseThemes"/>
+        <activity android:name=".activity.PersonalActivity"
+            android:theme="@style/BaseThemes"></activity>
+        <activity android:name=".activity.NickSignActivity"
+            android:theme="@style/BaseThemes"/>
     </application>
 
 </manifest>

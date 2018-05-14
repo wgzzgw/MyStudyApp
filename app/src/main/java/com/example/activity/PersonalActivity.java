@@ -2,8 +2,11 @@ package com.example.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -12,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.R;
 import com.example.dialog.LoadingDialog;
+import com.example.util.ImgUtils;
 import com.example.util.PicChooserHelper;
 
 import java.io.File;
@@ -38,7 +42,32 @@ public class PersonalActivity extends BaseActivity implements View.OnClickListen
     public static final String NICK_NAME_KEY = "nick_name_key";//存放昵称key
     public static final int NICK_NAME = 4;
     private PicChooserHelper mPicChooserHelper;//图片选择工具类
-
+    private Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    UserInfo uMyInfo = JMessageClient.getMyInfo();
+                    uMyInfo.getAvatarBitmap(new GetAvatarBitmapCallback() {
+                        @Override
+                        public void gotResult(int responseCode, String responseMessage, Bitmap avatarBitmap) {
+                            if (responseCode == 0) {
+                                //用户设置过头像
+                  /*  mIv_photo.setImageBitmap(avatarBitmap);*/
+                                ImgUtils.loadbit(avatarBitmap,mIv_photo);
+                            } else {
+                                //默认头像
+                   /* mIv_photo.setImageResource(R.drawable.rc_default_portrait);*/
+                                ImgUtils.load(R.drawable.rc_default_portrait,mIv_photo);
+                            }
+                        }
+                    });
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,10 +91,12 @@ public class PersonalActivity extends BaseActivity implements View.OnClickListen
             public void gotResult(int responseCode, String responseMessage, Bitmap avatarBitmap) {
                 if (responseCode == 0) {
                     //用户设置过头像
-                    mIv_photo.setImageBitmap(avatarBitmap);
+                    /*mIv_photo.setImageBitmap(avatarBitmap);*/
+                    ImgUtils.loadbit(avatarBitmap,mIv_photo);
                 } else {
                     //默认头像
-                    mIv_photo.setImageResource(R.drawable.rc_default_portrait);
+                    /*mIv_photo.setImageResource(R.drawable.rc_default_portrait);*/
+                    ImgUtils.load(R.drawable.rc_default_portrait,mIv_photo);
                 }
             }
         });
@@ -112,6 +143,9 @@ public class PersonalActivity extends BaseActivity implements View.OnClickListen
     }
     @Override
     protected void onActivityResult(final int requestCode, int resultCode, Intent data) {
+        if (mPicChooserHelper != null) {
+            mPicChooserHelper.onActivityResult(requestCode, resultCode, data);
+        }
         if (data != null) {
             Bundle bundle = data.getExtras();
             switch (resultCode) {
@@ -178,17 +212,11 @@ public class PersonalActivity extends BaseActivity implements View.OnClickListen
         mPicChooserHelper.showPicChooserDialog();
     }
     private void updateAvatar() {
-        mMyInfo.getAvatarBitmap(new GetAvatarBitmapCallback() {
-            @Override
-            public void gotResult(int responseCode, String responseMessage, Bitmap avatarBitmap) {
-                if (responseCode == 0) {
-                    //用户设置过头像
-                    mIv_photo.setImageBitmap(avatarBitmap);
-                } else {
-                    //默认头像
-                    mIv_photo.setImageResource(R.drawable.rc_default_portrait);
-                }
-            }
-        });
+        mHandler.sendEmptyMessageDelayed(1, 3000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

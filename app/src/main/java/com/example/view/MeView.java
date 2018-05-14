@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.R;
 import com.example.dialog.LoadingDialog;
+import com.example.util.ImgUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -74,9 +75,11 @@ public class MeView extends LinearLayout {
 
     public void showPhoto(Bitmap avatarBitmap) {
         if (avatarBitmap != null) {
-            mTakePhotoBtn.setImageBitmap(avatarBitmap);
+           /* mTakePhotoBtn.setImageBitmap(avatarBitmap);*/
+            ImgUtils.loadbit(avatarBitmap,mTakePhotoBtn);
         }else {
-            mTakePhotoBtn.setImageResource(R.drawable.rc_default_portrait);
+            /*mTakePhotoBtn.setImageResource(R.drawable.rc_default_portrait);*/
+            ImgUtils.load(R.drawable.rc_default_portrait,mTakePhotoBtn);
         }
     }
     public void showNickName(UserInfo myInfo) {

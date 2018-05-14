@@ -75,6 +75,7 @@ public class ResetPasswordActivity extends BaseActivity{
                                 if (responseCode == 0) {
                                     //修改成功
                                    Toast.makeText(ResetPasswordActivity.this,"修改成功！",Toast.LENGTH_SHORT).show();
+                                    finish();
                                 }else {
                                     Toast.makeText(ResetPasswordActivity.this,"修改失败, 新密码要在4-128字节之间！",Toast.LENGTH_SHORT).show();
                                 }

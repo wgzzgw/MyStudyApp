@@ -1,9 +1,12 @@
 package com.example.util;
 
+import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.MyApplication;
+
+import java.io.ByteArrayOutputStream;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
@@ -33,6 +36,15 @@ public class ImgUtils {
         Glide.with(MyApplication.getContext())
                 .load(resId)
                 .bitmapTransform(new CropCircleTransformation(MyApplication.getContext()))
+                .into(targetView);
+    }
+    //将对应bitmap设置到目标targetView
+    public static void loadbit(Bitmap bitmap,ImageView targetView){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] bytes=baos.toByteArray();
+        Glide.with(MyApplication.getContext())
+                .load(bytes)
                 .into(targetView);
     }
 }

@@ -85,6 +85,7 @@ public class ResetGenderActivity extends BaseActivity{
                         if (responseCode == 0) {
                             //修改成功
                             Toast.makeText(ResetGenderActivity.this,"修改性别成功！",Toast.LENGTH_SHORT).show();
+                            finish();
                         } else {
                             Toast.makeText(ResetGenderActivity.this,"修改性别失败！",Toast.LENGTH_SHORT).show();
                         }

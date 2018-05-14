@@ -37,13 +37,14 @@ public class PicChooserHelper {
     private OnChooseResultListener mOnChooserResultListener;//回调接口给调用者
     // Temp照片路径
     public static String TEMP_IMAGE_PATH;
+    private  PicChooseDialog dialog;
     public PicChooserHelper(Activity activity) {
         mActivity = activity;
         TEMP_IMAGE_PATH = Environment.getExternalStorageDirectory().getPath() + "/temp.png";//图片输出地址
     }
     public void showPicChooserDialog() {
         if (mActivity != null) {
-            PicChooseDialog dialog = new PicChooseDialog(mActivity);
+             dialog = new PicChooseDialog(mActivity);
             dialog.setOnDialogClickListener(new PicChooseDialog.OnDialogClickListener() {
                 @Override
                 public void onCamera() {
@@ -176,6 +177,7 @@ public class PicChooserHelper {
         }
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        closeDialog();
         if (requestCode == FROM_CAMERA) {
             //从相机拍摄返回
             if (resultCode == Activity.RESULT_OK) {
@@ -257,7 +259,7 @@ public class PicChooserHelper {
         }
     }
     private void uploadTo7Niu(String path) {
-        String name="System.currentTimeMillis()_crop";
+        String name=System.currentTimeMillis()+"_crop";
         /*
         * path:图片路径，name:七牛云Bucket，回调接口
         * */
@@ -297,5 +299,8 @@ public class PicChooserHelper {
     }
     public void setOnChooseResultListener(OnChooseResultListener l) {
         mOnChooserResultListener = l;
+    }
+    public void closeDialog(){
+        dialog.destroy();
     }
 }

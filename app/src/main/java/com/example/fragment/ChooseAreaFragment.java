@@ -262,4 +262,10 @@ public class ChooseAreaFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onDestroy() {
+        progressDialog.destroy();
+        super.onDestroy();
+    }
 }

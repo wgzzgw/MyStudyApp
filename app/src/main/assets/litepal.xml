@@ -1,9 +1,16 @@
 <litepal>
     <dbname value="city_listview"/>
-    <version value="1"/>
+    <version value="2"/>
     <list>
         <mapping class="com.example.db.Province"/>
         <mapping class="com.example.db.City"/>
         <mapping class="com.example.db.Country"/>
+    </list>
+    <dbname value="friend"/>
+    <version value="2"/>
+    <list>
+        <mapping class="com.example.db.FriendEntry"/>
+        <mapping class="com.example.db.UserEntry"/>
+        <mapping class="com.example.db.FriendRecommendEntry"/>
     </list>
 </litepal>

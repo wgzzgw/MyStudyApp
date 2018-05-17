@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example">
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -9,8 +14,13 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".mystudyapp.MainActivity" />
-        <activity android:name=".loginandsign.SignAndLogin"
+        <activity
+            android:name=".mystudyapp.MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".loginandsign.SignAndLogin"
+            android:screenOrientation="portrait"
             android:theme="@style/BaseThemes">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,18 +28,42 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ResetPasswordActivity"
-            android:theme="@style/BaseThemes"
-            />
+        <activity
+            android:name=".activity.ResetPasswordActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseThemes" />
         <activity android:name=".activity.BaseActivity" />
-        <activity android:name=".activity.ResetGenderActivity"
-            android:theme="@style/BaseThemes"/>
-        <activity android:name=".activity.ResetAreaActivity"
-            android:theme="@style/BaseThemes"/>
-        <activity android:name=".activity.PersonalActivity"
+        <activity
+            android:name=".activity.ResetGenderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseThemes" />
+        <activity
+            android:name=".activity.ResetAreaActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseThemes" />
+        <activity
+            android:name=".activity.PersonalActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseThemes" />
+        <activity
+            android:name=".activity.NickSignActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseThemes" />
+        <activity
+            android:name=".activity.SearchForAddFriendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseThemes" />
+        <activity
+            android:name=".activity.FriendRecommendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseThemes" />
+        <activity
+            android:name=".activity.FriendInfoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseThemes" />
+        <activity android:name=".activity.BrowserViewPagerActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BaseThemes"></activity>
-        <activity android:name=".activity.NickSignActivity"
-            android:theme="@style/BaseThemes"/>
     </application>
 
 </manifest>

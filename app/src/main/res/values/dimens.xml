@@ -8,4 +8,5 @@
     <dimen name="padd">20dp</dimen>
     <dimen name="text_minimum_size">12sp</dimen>
     <dimen name="title_bar_height">48.5dp</dimen>
+    <dimen name="text_size">12sp</dimen>
 </resources>

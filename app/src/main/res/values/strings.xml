@@ -9,4 +9,7 @@
     <string name="jmui_logout_confirm">确定退出登录？</string>
     <string name="jmui_cancel">取消</string>
     <string name="jmui_confirm">确定</string>
+    <string name="man">男</string>
+    <string name="women">女</string>
+    <string name="unknow">保密</string>
 </resources>

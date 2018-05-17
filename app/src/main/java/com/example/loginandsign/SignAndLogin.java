@@ -27,11 +27,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.R;
+import com.example.db.UserEntry;
 import com.example.mystudyapp.MainActivity;
 import com.example.util.ConvertUtil;
 import com.example.util.ImgUtils;
 
 import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.model.UserInfo;
 import cn.jpush.im.api.BasicCallback;
 
 public class SignAndLogin extends AppCompatActivity {
@@ -344,6 +346,11 @@ public class SignAndLogin extends AppCompatActivity {
                                     editor.clear();
                                 }
                                 editor.apply();
+                                UserInfo myInfo = JMessageClient.getMyInfo();
+                                UserEntry userEntry=new UserEntry();
+                                userEntry.setUsername(myInfo.getUserName());
+                                userEntry.setAppKey(myInfo.getAppKey());
+                                userEntry.save();
                                 Intent intent = new Intent();
                                 intent.setClass(SignAndLogin.this, MainActivity.class);
                                 startActivity(intent);

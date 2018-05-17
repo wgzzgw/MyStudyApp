@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/friend_verify_item_ll"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/item_head_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="15dp" />
+    <TextView
+        android:id="@+id/friendname"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_gravity="center_vertical"
+        android:text="好友名字"
+        android:textColor="#FF2C2C2C"
+        android:textSize="19sp"/>
+    <LinearLayout
+        android:id="@+id/layout_add"
+        android:layout_width="80dp"
+        android:layout_height="65.0dip"
+        android:layout_marginLeft="50dp"
+        android:background="@color/blue_btn_normal"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/txt_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="同意"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_back"
+        android:layout_width="80dp"
+        android:layout_height="65.0dip"
+        android:layout_marginLeft="1dp"
+        android:background="#eb424d"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/txt_del"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="删除"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+    </LinearLayout>
+</LinearLayout>

@@ -3,6 +3,7 @@ package com.example;
 import android.app.Application;
 import android.content.Context;
 
+import com.example.db.UserEntry;
 import com.example.util.QnUploadHelper;
 
 import org.litepal.LitePal;
@@ -39,5 +40,11 @@ public class MyApplication extends Application {
     }
     public void onTerminate(){
         super.onTerminate();
+    }
+    public static UserEntry getUserEntry() {
+        UserEntry userEntry=new UserEntry();
+        userEntry.setUsername(JMessageClient.getMyInfo().getUserName());
+        userEntry.setAppKey(JMessageClient.getMyInfo().getAppKey());
+        return userEntry;
     }
 }

@@ -94,4 +94,10 @@ public class MeFragment extends Fragment {
             Toast.makeText(mContext,"退出失败！",Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onDestroy() {
+        mMeController.destorydialog();
+        super.onDestroy();
+    }
 }

@@ -1,9 +1,11 @@
 package com.example.fragment;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -57,6 +59,8 @@ public class ContactsFragment extends BaseFragment {
             }
         }
     };
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +88,8 @@ public class ContactsFragment extends BaseFragment {
             public void run() {
                 mContactsController.timerefresh();
             }
-        }, 0, 60000*20); //20分钟刷新一次
+        }, 0, 60000*2); //2分钟刷新一次
+        sharedPreferences= PreferenceManager.getDefaultSharedPreferences(mContext);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,7 +105,6 @@ public class ContactsFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         handler.sendEmptyMessageDelayed(1,1500);
-        /*mContactsController.refreshContact();*/
     }
 
     /*
@@ -111,9 +115,13 @@ public class ContactsFragment extends BaseFragment {
     //接收到好友事件
     public void onEvent(ContactNotifyEvent event) {
         Log.d("bb", "onEvent: ");
-        if (event.getType() == ContactNotifyEvent.Type.invite_received) {
             final UserEntry user = MyApplication.getUserEntry();
             final String username = event.getFromUsername();//获取事件发送者名字
+        if (event.getType() == ContactNotifyEvent.Type.invite_received) {
+            int i=sharedPreferences.getInt("num",0);
+            editor=sharedPreferences.edit();
+            editor.putInt("num",i+1);
+            editor.apply();
             JMessageClient.getUserInfo(username, null, new GetUserInfoCallback() {
                 @Override
                 public void gotResult(int status, String desc, UserInfo userInfo) {

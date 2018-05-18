@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,10 +108,14 @@ public class ListAdapter extends BaseAdapter {
         } else {
             ImgUtils.load(R.drawable.jmui_head_icon,holder.avatar);
         }
-        final long[] uid = new long[1];
-        uid[0] = friend.uid;
-        String nickName = friend.nickName;
-        holder.displayName.setText(nickName);
+        if(!TextUtils.isEmpty(friend.getNoteName())&&!friend.getNoteName().trim().equals("")){
+            holder.displayName.setText(friend.getNoteName());
+        }else
+        if(!TextUtils.isEmpty(friend.getNickName())) {
+            holder.displayName.setText(friend.getNickName());
+        }else{
+            holder.displayName.setText(friend.getUsername());
+        }
         convertView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {

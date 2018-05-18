@@ -46,6 +46,16 @@
                 android:layout_height="36dp"
                 android:layout_marginLeft="14.67dp"
                 android:background="@drawable/verification" />
+                <TextView
+                    android:textSize="9sp"
+                    android:gravity="center"
+                    android:id="@+id/friend_verification_num"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginLeft="43dp"
+                    android:layout_gravity="top|right"
+                    android:background="@drawable/red_circle"
+                    android:textColor="@android:color/white"/>
         </FrameLayout>
 
         <TextView
@@ -77,8 +87,27 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:divider="@drawable/main_list_divider_line"
-                android:dividerHeight="0.1dp" />
+                android:dividerHeight="0.2dp" />
             </android.support.v4.widget.SwipeRefreshLayout>
         </RelativeLayout>
+        <!--中间显示的字母-->
+        <TextView
+            android:id="@+id/tv_first"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:text="A"
+            android:textColor="#ff0000"
+            android:textSize="30sp"
+            android:visibility="gone" />
+        <com.example.view.SideBar
+            android:id="@+id/sidebar"
+            android:layout_width="11.33dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right|center"
+            android:layout_marginBottom="33dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="2dp"
+            android:visibility="visible"/>
     </FrameLayout>
 </com.example.view.ContactsView>

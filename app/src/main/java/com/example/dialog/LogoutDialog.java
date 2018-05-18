@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.R;
+import com.example.activity.FriendInfoActivity;
+import com.example.mystudyapp.MainActivity;
 
 /**
  * Created by yy on 2018/5/13.
@@ -36,5 +38,9 @@ public class LogoutDialog extends BaseDialog {
        TextView title = (TextView) view.findViewById(R.id.jmui_title);
        cancel = (Button) view.findViewById(R.id.jmui_cancel_btn);
        comfirm = (Button) view.findViewById(R.id.jmui_commit_btn);
+        if(activity instanceof FriendInfoActivity)
+        title.setText("确认删除好友?");
+        else if(activity instanceof MainActivity)
+            title.setText("确认退出登录?");
    }
 }

@@ -120,4 +120,7 @@ public class MeController implements View.OnClickListener{
                 break;
         }
     }
+    public void destorydialog(){
+        mDialog.destroy();
+    }
 }

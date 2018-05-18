@@ -2,8 +2,11 @@ package com.example.controller;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.example.R;
@@ -38,12 +41,14 @@ public class ContactsController implements View.OnClickListener {
     private List<FriendEntry> mList = new ArrayList<>();//好友列表数据
     private ListAdapter mAdapter;
     private UserEntry user;
+    private SharedPreferences sharedPreferences;
     public ContactsController(ContactsView mContactsView, FragmentActivity context) {
         this.mContactsView = mContactsView;
         this.mContext = context;
+        sharedPreferences= PreferenceManager.getDefaultSharedPreferences(mContext);
     }
     public void initContacts() {
-        mList.clear();
+        mContactsView.showNewFriends(sharedPreferences.getInt("num",0));
         //数据库查询
          List<UserEntry> users= DataSupport.where("username=? and appKey=?",
                 JMessageClient.getMyInfo().getUserName(),
@@ -63,6 +68,7 @@ public class ContactsController implements View.OnClickListener {
                     //成功获取好友列表
                     if (userInfoList.size() != 0) {
                         //有好友
+                        mList.clear();
                             for (UserInfo userInfo : userInfoList) {
                                 //获取好友的展示名
                                 String displayName = userInfo.getDisplayName();
@@ -135,13 +141,13 @@ public class ContactsController implements View.OnClickListener {
             case R.id.verify_ll://验证消息
                 intent.setClass(mContext, FriendRecommendActivity.class);
                 mContext.startActivity(intent);
+                mContactsView.dismissNewFriends();
                 break;
             default:
                 break;
         }
     }
     public void timerefresh(){
-        mList.clear();
         //数据库查询
         List<UserEntry> users= DataSupport.where("username=? and appKey=?",
                 JMessageClient.getMyInfo().getUserName(),
@@ -154,18 +160,19 @@ public class ContactsController implements View.OnClickListener {
                     //成功获取好友列表
                     if (userInfoList.size() != 0) {
                         //有好友
+                        mList.clear();
                         for (UserInfo userInfo : userInfoList) {
                             //获取好友的展示名
                             String displayName = userInfo.getDisplayName();
                             //避免重复请求时导致数据重复
-                            List<FriendEntry> friendEntrys=DataSupport.where("username=? and user=? and " +
-                                    "appKey=?",userInfo.getUserName(),user.getUsername(),userInfo.getAppKey()).find(FriendEntry.class);
-                            FriendEntry friend=null;
-                            if(friendEntrys.size()!=0) {
+                            DataSupport.deleteAll(FriendEntry.class,"username=? and user=? and appKey=?",
+                                    userInfo.getUserName(),user.getUsername(),userInfo.getAppKey());
+                           /* List<FriendEntry> friendEntrys=DataSupport.where("username=? and user=? and " +
+                                    "appKey=?",userInfo.getUserName(),user.getUsername(),userInfo.getAppKey()).find(FriendEntry.class);*/
+                            FriendEntry friend;
+                            /*if(friendEntrys.size()!=0) {
                                 friend = friendEntrys.get(0);
-                                friend.delete();
-                            }
-                            if (null == friend||!friend.isSaved()) {
+                            }*/
                                 //数据库无此好友
                                 if (TextUtils.isEmpty(userInfo.getAvatar())) {
                                     friend=new FriendEntry();
@@ -202,8 +209,6 @@ public class ContactsController implements View.OnClickListener {
                                 }
                                 friend.save();
                                 mList.add(friend);
-                            }
-                            mList.add(friend);
                         }
                     }else{
 

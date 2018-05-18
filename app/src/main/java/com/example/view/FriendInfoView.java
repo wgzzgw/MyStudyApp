@@ -87,18 +87,18 @@ public class FriendInfoView extends LinearLayout {
             String userName = userInfo.getUserName();
             //有备注 有昵称
             mTv_userName.setText(userName);
-            if (!TextUtils.isEmpty(noteName) && !TextUtils.isEmpty(nickName)) {
+            if (!TextUtils.isEmpty(noteName) && !TextUtils.isEmpty(nickName)&&!noteName.trim().equals("")) {
                 mRl_NickName.setVisibility(View.VISIBLE);
                 mTv_NickName.setText(nickName);
                 mTv_noteName.setText("备注名: " + noteName);
             }
             //没有备注 有昵称
-            else if (TextUtils.isEmpty(noteName) && !TextUtils.isEmpty(nickName)) {
+            else if ((TextUtils.isEmpty(noteName)||noteName.trim().equals("")) && !TextUtils.isEmpty(nickName)) {
                 mRl_NickName.setVisibility(View.GONE);
                 mTv_noteName.setText("昵称: " + nickName);
             }
             //有备注 没有昵称
-            else if (!TextUtils.isEmpty(noteName) && TextUtils.isEmpty(nickName)) {
+            else if (!TextUtils.isEmpty(noteName) &&!noteName.trim().equals("")&& TextUtils.isEmpty(nickName)) {
                 mRl_NickName.setVisibility(View.GONE);
                 mTv_noteName.setText("备注名: " + noteName);
             }

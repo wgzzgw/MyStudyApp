@@ -1,6 +1,8 @@
 package com.example.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ListView;
 
@@ -27,11 +29,16 @@ public class FriendRecommendActivity extends BaseActivity  {
     private ListView mListView;//推荐的好友消息
     private FriendRecommendAdapter mAdapter;
     private List<FriendRecommendEntry> mList=new ArrayList<FriendRecommendEntry>();//数据源 好友推荐
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_recommend);
-
+        sharedPreferences= PreferenceManager.getDefaultSharedPreferences(this);
+        editor=sharedPreferences.edit();
+        editor.putInt("num",0);
+        editor.apply();
         initView();
         UserEntry user = MyApplication.getUserEntry();
         if (null != user) {

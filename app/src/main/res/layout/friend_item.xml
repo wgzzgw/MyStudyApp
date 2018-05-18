@@ -6,6 +6,14 @@
     android:background="#FFFFFFFF"
     android:gravity="center_vertical"
     android:orientation="vertical">
+    <!--首字母-->
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#9e9d9d"
+        android:textColor="#fff"
+        android:textSize="16sp" />
     <LinearLayout
         android:id="@+id/frienditem"
         android:layout_width="fill_parent"

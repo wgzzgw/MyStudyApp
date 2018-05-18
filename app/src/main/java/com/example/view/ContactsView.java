@@ -26,7 +26,7 @@ public class ContactsView extends LinearLayout {
     private LayoutInflater mInflater;
     private Context mContext;
     private LinearLayout mVerify_ll ;//验证消息布局
-
+    private TextView mNewFriendNum;
     public ContactsView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
@@ -36,19 +36,32 @@ public class ContactsView extends LinearLayout {
         mIb_goToAddFriend = (ImageButton) findViewById(R.id.ib_goToAddFriend);
         mListView = (ListView) findViewById(R.id.listview);
         mVerify_ll = (LinearLayout)findViewById(R.id.verify_ll);
-
+        mNewFriendNum = (TextView) findViewById(R.id.friend_verification_num);
+        mNewFriendNum.setVisibility(INVISIBLE);
     }
     public void setListener(ContactsController contactsController) {
         mIb_goToAddFriend.setOnClickListener(contactsController);
         mVerify_ll.setOnClickListener(contactsController);
-    }
-    public void setSelection(int position) {
-        mListView.setSelection(position);
     }
     public void setAdapter(ListAdapter adapter) {
         mListView.setAdapter(adapter);
     }
     public void showContact() {
         mListView.setVisibility(VISIBLE);
+    }
+    public void showNewFriends(int num) {
+        mNewFriendNum.setVisibility(VISIBLE);
+        if (num > 99) {
+            mNewFriendNum.setText("99+");
+        } else if(num==0) {
+            mNewFriendNum.setVisibility(INVISIBLE);
+        }
+            else
+            {
+                mNewFriendNum.setText(String.valueOf(num));
+            }
+    }
+    public void dismissNewFriends() {
+        mNewFriendNum.setVisibility(INVISIBLE);
     }
 }

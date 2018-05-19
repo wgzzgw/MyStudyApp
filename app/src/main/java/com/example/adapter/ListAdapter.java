@@ -11,11 +11,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.example.R;
 import com.example.activity.FriendInfoActivity;
+import com.example.controller.ContactsController;
 import com.example.db.FriendEntry;
+import com.example.util.HanziToPinyin;
 import com.example.util.ImgUtils;
 
 import java.io.File;
@@ -33,19 +36,61 @@ import cn.jpush.im.android.api.model.UserInfo;
 /*
 * 通讯录listview适配器
 * */
-public class ListAdapter extends BaseAdapter {
+public class ListAdapter extends BaseAdapter implements SectionIndexer {
+    private Context mContext;
+    private LayoutInflater mInflater;
+    private List<FriendEntry> mData;//数据源
+    private int[] mSectionIndices;
+    private String[] mSectionLetters;
+    @Override
+    public Object[] getSections() {
+        return  mSectionLetters;
+    }
+    /*
+    * 根据分类列的索引号获得该序列的首个位置
+    * */
+    @Override
+    public int getPositionForSection(int sectionIndex) {
+        if (null == mSectionIndices || mSectionIndices.length == 0) {
+            return 0;
+        }
+
+        if (sectionIndex >= mSectionIndices.length) {
+            sectionIndex = mSectionIndices.length - 1;
+        } else if (sectionIndex < 0) {
+            sectionIndex = 0;
+        }
+        return mSectionIndices[sectionIndex];
+    }
+
+    /*
+    * 通过该项的位置，获得所在分类组的索引号
+    * */
+    @Override
+    public int getSectionForPosition(int position) {
+        if (null != mSectionIndices) {
+            for (int i = 0; i < mSectionIndices.length; i++) {
+                if (position < mSectionIndices[i]) {
+                    return i - 1;
+                }
+            }
+            return mSectionIndices.length - 1;
+        }
+        return -1;
+    }
+
     private static class ViewHolder {
         LinearLayout itemLl;//好友一栏布局
         TextView displayName;//好友展示名
         ImageView avatar;//好友头像
+        TextView tv;//最上面的导航字母
     }
-    private Context mContext;
-    private LayoutInflater mInflater;
-    private List<FriendEntry> mData;//数据源
     public ListAdapter(Context context, List<FriendEntry> list) {
         this.mContext = context;
         this.mData = list;
         mInflater = LayoutInflater.from(mContext);
+        mSectionIndices = getSectionIndices();
+        mSectionLetters = getSectionLetters();
     }
     @Override
     public int getCount() {
@@ -71,6 +116,7 @@ public class ListAdapter extends BaseAdapter {
             holder.itemLl = (LinearLayout) convertView.findViewById(R.id.frienditem);
             holder.avatar = (ImageView) convertView.findViewById(R.id.friend_photo);
             holder.displayName = (TextView) convertView.findViewById(R.id.friendname);
+            holder.tv=(TextView)convertView.findViewById(R.id.tv);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -108,6 +154,7 @@ public class ListAdapter extends BaseAdapter {
         } else {
             ImgUtils.load(R.drawable.jmui_head_icon,holder.avatar);
         }
+        String pinyin;
         if(!TextUtils.isEmpty(friend.getNoteName())&&!friend.getNoteName().trim().equals("")){
             holder.displayName.setText(friend.getNoteName());
         }else
@@ -116,6 +163,7 @@ public class ListAdapter extends BaseAdapter {
         }else{
             holder.displayName.setText(friend.getUsername());
         }
+        pinyin=holder.displayName.getText().toString();
         convertView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -127,6 +175,83 @@ public class ListAdapter extends BaseAdapter {
                 mContext.startActivity(intent);
             }
         });
+        String letter=getLetter(pinyin);
+        int p=-1;
+        for(int a = 0; a<ContactsController.letter.length; a++){
+            if(ContactsController.letter[a].equals(letter)){
+                p=a;
+                break;
+            }
+        }
+        holder.tv.setVisibility(p==position? View.VISIBLE
+                : View.GONE);
+        holder.tv.setText(letter);
         return convertView;
+    }
+
+    /*
+    * 基于某个字段的分组，这个数据源必须是在这个字段上是有序的！
+    * */
+    private int[] getSectionIndices() {
+        ArrayList<Integer> sectionIndices = new ArrayList<Integer>();
+        if (mData.size() > 0) {
+            char lastFirstChar = mData.get(0).getLetter().charAt(0);
+            sectionIndices.add(0);
+            for (int i = 1; i < mData.size(); i++) {
+                if (mData.get(i).letter.charAt(0) != lastFirstChar) {
+                    lastFirstChar = mData.get(i).letter.charAt(0);
+                    sectionIndices.add(i);
+                }
+            }
+            int[] sections = new int[sectionIndices.size()];
+            for (int i = 0; i < sectionIndices.size(); i++) {
+                sections[i] = sectionIndices.get(i);
+            }
+            return sections;
+        }
+        return null;
+    }
+
+    private String[] getSectionLetters() {
+        if (null != mSectionIndices) {
+            String[] letters = new String[mSectionIndices.length];
+            for (int i = 0; i < mSectionIndices.length; i++) {
+                letters[i] = mData.get(mSectionIndices[i]).getLetter();
+            }
+            return letters;
+        }
+        return null;
+    }
+    public int getSectionForLetter(String letter) {
+        if (null != mSectionIndices) {
+            for (int i = 0; i < mSectionIndices.length; i++) {
+                if (mSectionLetters[i].equals(letter)) {
+                    return mSectionIndices[i];
+                }
+            }
+        }
+        return -1;
+    }
+    private String getLetter(String name) {
+        String letter;
+        ArrayList<HanziToPinyin.Token> tokens = HanziToPinyin.getInstance()
+                .get(name);
+        StringBuilder sb = new StringBuilder();
+        if (tokens != null && tokens.size() > 0) {
+            for (HanziToPinyin.Token token : tokens) {
+                if (token.type == HanziToPinyin.Token.PINYIN) {
+                    sb.append(token.target);
+                } else {
+                    sb.append(token.source);
+                }
+            }
+        }
+        String sortString = sb.toString().substring(0, 1).toUpperCase();
+        if (sortString.matches("[A-Z]")) {
+            letter = sortString.toUpperCase();
+        } else {
+            letter = "#";
+        }
+        return letter;
     }
 }

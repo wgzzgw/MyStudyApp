@@ -18,10 +18,12 @@ import com.example.R;
 import com.example.controller.ContactsController;
 import com.example.db.FriendRecommendEntry;
 import com.example.db.UserEntry;
+import com.example.util.HanziToPinyin;
 import com.example.view.ContactsView;
 
 import org.litepal.crud.DataSupport;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -74,6 +76,7 @@ public class ContactsFragment extends BaseFragment {
 
         mContactsView.setOnClickListener(mContactsController);
         mContactsView.setListener(mContactsController);
+        mContactsView.setSideBarTouchListener(mContactsController);
         mSwipeRefreshLayout = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_layout_list);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

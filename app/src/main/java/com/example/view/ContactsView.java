@@ -27,6 +27,8 @@ public class ContactsView extends LinearLayout {
     private Context mContext;
     private LinearLayout mVerify_ll ;//验证消息布局
     private TextView mNewFriendNum;
+    private TextView mLetterHintTv;//布局中间字母显示
+    private SideBar mSideBar;//字母条
     public ContactsView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
@@ -38,6 +40,10 @@ public class ContactsView extends LinearLayout {
         mVerify_ll = (LinearLayout)findViewById(R.id.verify_ll);
         mNewFriendNum = (TextView) findViewById(R.id.friend_verification_num);
         mNewFriendNum.setVisibility(INVISIBLE);
+        mLetterHintTv = (TextView) findViewById(R.id.tv_first);
+        mSideBar = (SideBar) findViewById(R.id.sidebar);
+        mSideBar.setTextView(mLetterHintTv);
+        mSideBar.bringToFront();
     }
     public void setListener(ContactsController contactsController) {
         mIb_goToAddFriend.setOnClickListener(contactsController);
@@ -63,5 +69,12 @@ public class ContactsView extends LinearLayout {
     }
     public void dismissNewFriends() {
         mNewFriendNum.setVisibility(INVISIBLE);
+    }
+    //listview定位位置
+    public void setSelection(int position) {
+        mListView.setSelection(position);
+    }
+    public void setSideBarTouchListener(SideBar.OnTouchingLetterChangedListener listener) {
+        mSideBar.setOnTouchingLetterChangedListener(listener);
     }
 }

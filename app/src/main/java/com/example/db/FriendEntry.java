@@ -15,6 +15,13 @@ public class FriendEntry extends DataSupport {
     public String displayName;//好友展示名
     public String user;//好友归属谁
     public String appKey;
+    public String letter;
+    public String getLetter() {
+        return letter;
+    }
+    public void setLetter(String letter) {
+        this.letter = letter;
+    }
     public String getAppKey() {
         return appKey;
     }

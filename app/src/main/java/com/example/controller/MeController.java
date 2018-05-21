@@ -121,6 +121,8 @@ public class MeController implements View.OnClickListener{
         }
     }
     public void destorydialog(){
-        mDialog.destroy();
+        if(mDialog!=null) {
+            mDialog.destroy();
+        }
     }
 }

@@ -20,4 +20,14 @@ public class ConvertUtil {
         int px = (int) (dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
         return px;
     }
+    /*
+    * px转dp
+    * */
+    public static int inPx(int px,Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        int pxx=(int)(px/metrics.density+0.5f);
+        return pxx;
+    }
+
 }

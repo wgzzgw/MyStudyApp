@@ -54,4 +54,7 @@ dependencies {
     //七牛库
     compile 'com.qiniu:qiniu-android-sdk:7.3.+'
     compile 'com.qiniu:happy-dns:0.2.10'
+    //imui
+    compile 'cn.jiguang.imui:messagelist:0.4.6'
+    compile 'cn.jiguang.imui:chatinput:0.4.6'
 }

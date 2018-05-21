@@ -26,6 +26,7 @@ import com.example.dialog.EditMessageDialog;
 import com.example.dialog.LoadingDialog;
 import com.example.dialog.LogoutDialog;
 import com.example.util.ScreenUtil;
+import com.example.util.SharePreferenceManager;
 import com.example.view.FriendInfoView;
 
 import org.litepal.crud.DataSupport;
@@ -42,7 +43,7 @@ import cn.jpush.im.api.BasicCallback;
 /*
 * 好友信息界面
 * */
-public class FriendInfoActivity extends BaseActivity{
+public class FriendInfoActivity extends BaseActivity  {
     private FriendInfoView mFriendInfoView;
     private UserInfo mUserInfo;
     private FriendInfoController mFriendInfoController;
@@ -75,6 +76,15 @@ public class FriendInfoActivity extends BaseActivity{
         else if(getIntent().getStringExtra("flag").equals("2")){
             btn_goToChat=(Button)mFriendInfoView.findViewById(R.id.btn_goToChat);
             btn_goToChat.setVisibility(View.VISIBLE);
+            btn_goToChat.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    Intent intent=new Intent();
+                    intent.putExtra("userid",mUserInfo.getUserName());
+                    intent.setClass(FriendInfoActivity.this,ChatActivity.class);
+                    startActivity(intent);
+                }
+            });
             btn_deletefriend=(Button)mFriendInfoView.findViewById(R.id.btn_deletefriend);
             btn_deletefriend.setVisibility(View.VISIBLE);
             btn_deletefriend.setOnClickListener(new View.OnClickListener(){

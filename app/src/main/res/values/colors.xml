@@ -16,5 +16,8 @@
     <color name="item_click_bg_color">#E9EDED</color>
     <color name="press">#e8e8e8</color>
     <color name="dialogbackgound">#B0C4DE</color>
+    <color name="color_shape_start">#5D8DF6</color>
+    <color name="color_shape_end">#60B7F8</color>
+    <color name="color_shape_right">#5CBAF7</color>
 </resources>
 

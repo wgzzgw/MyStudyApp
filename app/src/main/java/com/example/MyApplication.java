@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.example.db.UserEntry;
 import com.example.util.QnUploadHelper;
+import com.example.util.SharePreferenceManager;
 
 import org.litepal.LitePal;
 
@@ -17,6 +18,8 @@ import cn.jpush.im.android.api.JMessageClient;
 public class MyApplication extends Application {
     private static MyApplication app;
     private static Context appContext;
+    public static String[] letter=new String[100];
+    private static String SAMPLE_CONFIGS = "sample_configs";
     @Override
     public void onCreate() {
         super.onCreate();
@@ -31,6 +34,8 @@ public class MyApplication extends Application {
                 "http://p7h60wv6m.bkt.clouddn.com/",
                 "zhibotupian"
         );
+        SharePreferenceManager.init(this, SAMPLE_CONFIGS);
+        JMessageClient.setDebugMode(true);
     }
     public static MyApplication getApplication() {
         return app;

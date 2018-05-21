@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.example.MyApplication;
 import com.example.R;
 import com.example.activity.FriendInfoActivity;
 import com.example.controller.ContactsController;
@@ -177,8 +179,8 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
         });
         String letter=getLetter(pinyin);
         int p=-1;
-        for(int a = 0; a<ContactsController.letter.length; a++){
-            if(ContactsController.letter[a].equals(letter)){
+        for(int a = 0; a< MyApplication.letter.length; a++){
+            if(MyApplication.letter[a].equals(letter)){
                 p=a;
                 break;
             }

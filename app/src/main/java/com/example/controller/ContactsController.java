@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
+import com.example.MyApplication;
 import com.example.R;
 import com.example.activity.FriendRecommendActivity;
 import com.example.activity.SearchForAddFriendActivity;
@@ -45,7 +46,6 @@ public class ContactsController implements View.OnClickListener ,SideBar.OnTouch
     private ListAdapter mAdapter;
     private UserEntry user;
     private SharedPreferences sharedPreferences;
-    public static String[] letter=new String[26];
     public ContactsController(ContactsView mContactsView, FragmentActivity context) {
         this.mContactsView = mContactsView;
         this.mContext = context;
@@ -131,8 +131,11 @@ public class ContactsController implements View.OnClickListener ,SideBar.OnTouch
 
                     }
                     Collections.sort(mList, new PinyinComparator());
+                    for(FriendEntry f:mList){
+                        Log.d("c", "gotResult: "+f.getLetter());
+                    }
                     for(int i=0;i<mList.size();i++){
-                        letter[i]=getLetter(mList.get(i).getDisplayName());
+                        MyApplication.letter[i]=getLetter(mList.get(i).getDisplayName());
                     }
                     mAdapter = new ListAdapter(mContext, mList);
                     mContactsView.setAdapter(mAdapter);
@@ -255,7 +258,7 @@ public class ContactsController implements View.OnClickListener ,SideBar.OnTouch
                     }
                     Collections.sort(mList, new PinyinComparator());
                     for(int i=0;i<mList.size();i++){
-                        letter[i]=getLetter(mList.get(i).getDisplayName());
+                        MyApplication.letter[i]=getLetter(mList.get(i).getDisplayName());
                     }
                     mAdapter = new ListAdapter(mContext, mList);
                     mContactsView.setAdapter(mAdapter);

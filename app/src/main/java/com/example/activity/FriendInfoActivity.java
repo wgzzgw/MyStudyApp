@@ -80,7 +80,8 @@ public class FriendInfoActivity extends BaseActivity  {
                 @Override
                 public void onClick(View view) {
                     Intent intent=new Intent();
-                    intent.putExtra("userid",mUserInfo.getUserName());
+                    intent.putExtra("userid",mUserInfo.getDisplayName());
+                    intent.putExtra("username",mUserInfo.getUserName());
                     intent.setClass(FriendInfoActivity.this,ChatActivity.class);
                     startActivity(intent);
                 }

@@ -1,6 +1,7 @@
 package com.example.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -13,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.R;
+import com.example.util.ImgUtils;
 import com.example.util.SharePreferenceManager;
 
 import cn.jiguang.imui.chatinput.ChatInputView;
@@ -44,7 +46,7 @@ public class ChatView extends RelativeLayout {
     private boolean mHasInit;
     private boolean mHasKeyboard;
     private int mHeight;
-
+    private OnCloseListener onCloseListener;
     private OnKeyboardChangedListener mKeyboardListener;
     private OnSizeChangedListener mSizeChangedListener;
     public ChatView(Context context) {
@@ -67,6 +69,14 @@ public class ChatView extends RelativeLayout {
         //固定大小
         mMsgList.setHasFixedSize(true);
         mChatInput.setMenuContainerHeight(SharePreferenceManager.getCachedKeyboardHeight());
+        mTitleBarBack.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if(onCloseListener!=null){
+                    onCloseListener.closeChatActivity();
+                }
+            }
+        });
     }
     public void setTitle(String title) {
         mTitleBarTitle.setText(title);
@@ -177,5 +187,11 @@ public class ChatView extends RelativeLayout {
 
     public interface OnSizeChangedListener {
         void onSizeChanged(int w, int h, int oldw, int oldh);
+    }
+    public interface OnCloseListener {
+        void closeChatActivity();
+    }
+    public void setOnCloseListener(OnCloseListener onCloseListener){
+        this.onCloseListener=onCloseListener;
     }
 }

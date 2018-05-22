@@ -30,6 +30,9 @@ public class MyMessage implements IMessage {
         //产生随机数，很少会重复
         this.id = UUID.randomUUID().getLeastSignificantBits();
     }
+    public MyMessage(){
+        this.id = UUID.randomUUID().getLeastSignificantBits();
+    }
     public long getId() {
         return id;
     }

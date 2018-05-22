@@ -27,7 +27,7 @@
                 android:paddingBottom="7dp"
                 android:paddingTop="7dp"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/icon_user" />
+                android:src="@drawable/back" />
         </RelativeLayout>
 
         <RelativeLayout

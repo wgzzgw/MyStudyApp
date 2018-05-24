@@ -38,7 +38,7 @@ public class ChatView extends RelativeLayout {
     private ImageView mTitleBarBack;//bar 返回键
     private TextView mTitleBarTitle;//bar 标题
     private ImageView mTitleOptionsImg;//bar 右侧选项键
-    private LinearLayout mTitle;//bar 布局
+  /*  private LinearLayout mTitle;//bar 布局*/
     private MessageList mMsgList;//消息接收与发送列表
     private ChatInputView mChatInput;//消息类型发送选择区
     private RecordVoiceButton mRecordVoiceBtn;//语音按钮
@@ -62,7 +62,7 @@ public class ChatView extends RelativeLayout {
         mTitleBarBack=(ImageView)findViewById(R.id.title_bar_back);
         mTitleBarTitle=(TextView)findViewById(R.id.title_bar_title);
         mTitleOptionsImg=(ImageView)findViewById(R.id.title_options_img);
-        mTitle=(LinearLayout)findViewById(R.id.title);
+       /* mTitle=(LinearLayout)findViewById(R.id.title);*/
         mMsgList=(MessageList)findViewById(R.id.msg_list);
         mChatInput=(ChatInputView)findViewById(R.id.chat_input);
         mRecordVoiceBtn = mChatInput.getRecordVoiceButton();
@@ -74,6 +74,14 @@ public class ChatView extends RelativeLayout {
             public void onClick(View view) {
                 if(onCloseListener!=null){
                     onCloseListener.closeChatActivity();
+                }
+            }
+        });
+        mTitleOptionsImg.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if(onCloseListener!=null){
+                    onCloseListener.clearHistory();
                 }
             }
         });
@@ -190,6 +198,7 @@ public class ChatView extends RelativeLayout {
     }
     public interface OnCloseListener {
         void closeChatActivity();
+        void clearHistory();
     }
     public void setOnCloseListener(OnCloseListener onCloseListener){
         this.onCloseListener=onCloseListener;

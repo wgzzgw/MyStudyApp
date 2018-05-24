@@ -1,5 +1,6 @@
 package com.example.mystudyapp;
 
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -7,8 +8,13 @@ import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
 
 import com.example.R;
+import com.example.activity.ChatActivity;
 import com.example.controller.MainController;
 import com.example.view.MainView;
+
+import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.content.PromptContent;
+import cn.jpush.im.android.api.event.NotificationClickEvent;
 
 public class MainActivity extends FragmentActivity {
     private MainView mMainView;//最外层布局
@@ -25,7 +31,6 @@ public class MainActivity extends FragmentActivity {
         mMainController = new MainController(mMainView, this);
         mMainView.setOnClickListener(mMainController);
         mMainView.setOnPageChangeListener(mMainController);
-
     }
     public FragmentManager getSupportFragmentManger() {
         return getSupportFragmentManager();

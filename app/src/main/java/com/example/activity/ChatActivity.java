@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -33,6 +34,8 @@ import com.example.R;
 import com.example.dialog.MyAlertDialog;
 import com.example.message.DefaultUser;
 import com.example.message.MyMessage;
+import com.example.mystudyapp.MainActivity;
+import com.example.util.MessageComparator;
 import com.example.util.SharePreferenceManager;
 import com.example.util.StringUtils;
 import com.example.util.TimeUtils;
@@ -43,30 +46,30 @@ import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import cn.jiguang.api.JCoreInterface;
 import cn.jiguang.imui.chatinput.ChatInputView;
-import cn.jiguang.imui.chatinput.listener.OnCameraCallbackListener;
 import cn.jiguang.imui.chatinput.listener.OnMenuClickListener;
 import cn.jiguang.imui.chatinput.listener.RecordVoiceListener;
 import cn.jiguang.imui.chatinput.model.FileItem;
 import cn.jiguang.imui.commons.BitmapLoader;
 import cn.jiguang.imui.commons.ImageLoader;
+import cn.jiguang.imui.commons.models.IMessage;
 import cn.jiguang.imui.messages.MsgListAdapter;
 import cn.jpush.im.android.api.JMessageClient;
 import cn.jpush.im.android.api.callback.DownloadCompletionCallback;
-import cn.jpush.im.android.api.callback.GetAvatarBitmapCallback;
-import cn.jpush.im.android.api.callback.GetUserInfoCallback;
 import cn.jpush.im.android.api.callback.ProgressUpdateCallback;
-import cn.jpush.im.android.api.content.FileContent;
 import cn.jpush.im.android.api.content.ImageContent;
+import cn.jpush.im.android.api.content.PromptContent;
 import cn.jpush.im.android.api.content.TextContent;
 import cn.jpush.im.android.api.content.VoiceContent;
 import cn.jpush.im.android.api.enums.ConversationType;
 import cn.jpush.im.android.api.event.MessageEvent;
+import cn.jpush.im.android.api.event.MessageRetractEvent;
 import cn.jpush.im.android.api.model.Conversation;
 import cn.jpush.im.android.api.model.Message;
 import cn.jpush.im.android.api.model.UserInfo;
@@ -83,7 +86,6 @@ import static cn.jiguang.imui.commons.models.IMessage.MessageType.SEND_TEXT;
 import static cn.jiguang.imui.commons.models.IMessage.MessageType.SEND_VIDEO;
 import static cn.jiguang.imui.commons.models.IMessage.MessageType.SEND_VOICE;
 import static cn.jpush.im.android.JMessage.mContext;
-
 
 public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeChangedListener
 ,ChatView.OnKeyboardChangedListener, View.OnTouchListener,ChatView.OnCloseListener{
@@ -103,12 +105,29 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
     private final int REQUEST_RECORD_VOICE_PERMISSION = 0x0001;//录音请求码
     private final int REQUEST_PHOTO_PERMISSION = 0x0002;//图册请求码
     private final int REQUEST_CAMERA_PERMISSION = 0x0003;//相机请求码
-    private int mOffset = 18;//一页的消息总数
-    private int mStart;//下一页加载更多的起始位置
+    /*private int mOffset = 18;//一页的消息总数
+    private int mStart;//下一页加载更多的起始位置*/
     private List<Message> mMsgList = new ArrayList<>();
     private List<MyMessage> mData = new ArrayList<>();//列表数据源
     private UserInfo targetUserInfo;//会话对象
-    private boolean mIsSingle = true;//如果是自己点进来的
+    /*boolean mLast=true;*/
+    private Handler handler=new Handler(){
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what){
+                case 1:
+                    Log.d("cc", "initMsgAdapter: "+mData.size());
+                    //由于图片和语音代码块存在异步操作，可能导致mData没有顺序排序
+                    Collections.sort(mData,new MessageComparator());
+                    mAdapter.addToEnd(mData);//加载历史数据的最新18条
+                    mAdapter.notifyDataSetChanged();
+                    mAdapter.getLayoutManager().scrollToPosition(0);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     //初始化adapter
     private void initMsgAdapter() {
         imageLoader = new ImageLoader() {
@@ -117,6 +136,8 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                 Glide.with(getApplicationContext())
                         .load(string)
                         .placeholder(R.mipmap.icon_user)
+                        .centerCrop()
+                        .dontAnimate()
                         .into(avatarImageView);
             }
 
@@ -125,6 +146,8 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                 Glide.with(getApplicationContext())
                         .load(string)
                         .placeholder(R.mipmap.icon_user)
+                        .override(500, 500)
+                        .dontAnimate()
                         .into(imageView);
             }
         };
@@ -152,7 +175,7 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                 String[] strings;
                 msgID = message.getMsgId();
                 //判断消息类型
-               /* if (message.getType() == SEND_TEXT
+               /*if (message.getType() == SEND_TEXT
                         || message.getType() == SEND_CUSTOM
                         || message.getType() == SEND_FILE
                         || message.getType() == SEND_IMAGE
@@ -160,7 +183,8 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                         || message.getType() == SEND_VIDEO) {
                     strings = new String[]{"复制", "撤回", "删除"};
                 } else {
-                    strings = new String[]{"复制", "撤回", "删除"};
+                   //接收的消息
+                    strings = new String[]{"复制", "转发", "删除"};
                 }*/
                 strings = new String[]{"复制", "撤回", "删除"};
                 final MyAlertDialog dialog = new MyAlertDialog(ChatActivity.this,
@@ -261,7 +285,7 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
         * 滚动列表加载历史消息（注意：如果使用了 PullToRefreshLayout 跳过这个部分）
         * 设置监听 OnLoadMoreListener，当滚动列表时就会触发 onLoadMore 事件
         * */
-        mAdapter.setOnLoadMoreListener(new MsgListAdapter.OnLoadMoreListener() {
+        /*mAdapter.setOnLoadMoreListener(new MsgListAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore(int page, int totalCount) {
                 //当滑到与mData.size()一样多的数据时，进行加载下一页
@@ -269,37 +293,43 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                     loadNextPage();
                 }
             }
-        });
+        });*/
         mChatView.setAdapter(mAdapter);
-        mAdapter.addToEnd(mData);//加载历史数据的最新18条
-        mAdapter.getLayoutManager().scrollToPosition(0);
+        handler.sendEmptyMessageDelayed(1,500);
     }
-    private void loadNextPage() {
+  /*  private  void loadNextPage() {
+        if(mLast==false) return;
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                mLast = false;
                 if (mConv != null) {
                     //会话中消息按时间降序排列，从其中的offset位置，获取limit条数的消息
+                    Log.d("z", "run: " + "mStart" + mStart);
+                    Log.d("z", "premdata: " + mData.size());
                     List<Message> msgList = mConv.getMessagesFromNewest(mStart, 18);
                     if (msgList != null) {
                         for (Message msg : msgList) {
-                            MyMessage jmuiMessage = new MyMessage();
-                            jmuiMessage.setMessage(msg);
-                            mData.add(0, jmuiMessage);
+                            messageinit(msg);
                         }
                         if (msgList.size() > 0) {
                             mOffset = msgList.size();
                         } else {
                             mOffset = 0;
                         }
-                        mStart += mOffset;
+                        Collections.sort(mData, new MessageComparator());
                         //补充加载出的数据到mData
-                        mAdapter.addToEnd(mData.subList(0, msgList.size()));
+                        if (mData.size() == mStart + mOffset) {
+                            mAdapter.addToEnd(mData.subList(mStart, mStart + mOffset));
+                        }
+                        Log.d("c", "handleMessage: " + mData.size());
+                        mStart += mOffset;
+                        mLast = true;
                     }
                 }
             }
-        }, 1000);
-    }
+        },1000);
+    }*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -311,8 +341,6 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
         //注册接收事件
        JMessageClient.registerEventReceiver(this);
         init();
-        initMsgAdapter();
-        mChatView.setTitle(name);
         mConv = JMessageClient.getSingleConversation(getIntent().getStringExtra("username"));
         if (mConv == null) {
             mConv = Conversation.createSingleConversation(getIntent().getStringExtra("username"));
@@ -322,19 +350,121 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
         * public abstract java.util.List<Message> getMessagesFromNewest(int offset,int limit)
         * 会话中消息按时间降序排列，从其中的offset位置，获取limit条数的消息.
         * */
-       this.mMsgList = mConv.getMessagesFromNewest(0, mOffset);//获取聊天室的消息，最新的18条
-        mStart = mOffset;
-        if (mMsgList.size() > 0) {
-            for (Message message : mMsgList) {
-                MyMessage jmuiMessage = new MyMessage();
-                jmuiMessage.setMessage(message);
-                mData.add(jmuiMessage);
-            }
-        }
+       /* this.mMsgList = mConv.getMessagesFromNewest(0, mOffset);//获取聊天室的消息，最新的18条*/
+        this.mMsgList=mConv.getAllMessage();
+        mData.clear();
+        /*mStart = mOffset;*/
+        initentermessage();
+        initMsgAdapter();
+        mChatView.setTitle(name);
         try {
             imgSend = userInfo.getAvatarFile().toURI().toString();
             imgRecrive = StringUtils.isNull(mConv.getAvatarFile().toURI().toString()) ? "R.mipmap.icon_user" : mConv.getAvatarFile().toURI().toString();
         } catch (Exception e) {
+        }
+    }
+    private  void initentermessage(){
+        if (mMsgList.size() > 0) {
+            for (final Message message : mMsgList) {
+                   messageinit(message);
+            }
+        }
+    }
+    private  void messageinit(final Message message){
+        if(message.getContent()instanceof PromptContent){
+            //撤回的消息,退出重新进来暂不处理
+            return ;
+        }
+        if (message.getContent() instanceof TextContent) {
+            if (message.getFromUser().getUserName() != userInfo.getUserName()) {
+                //说明是收到的文本消息
+                MyMessage jmuiMessage = new MyMessage(((TextContent) message.getContent()).getText(), RECEIVE_TEXT);
+                jmuiMessage.setMessage(message);
+                jmuiMessage.setText(((TextContent) message.getContent()).getText());
+                jmuiMessage.setTimeString(TimeUtils.ms2date("MM-dd HH:mm", message.getCreateTime()));
+                jmuiMessage.setUserInfo(new DefaultUser(targetUserInfo.getUserName(), targetUserInfo.getDisplayName(), imgRecrive));
+                //收到消息时，添加到集合
+                mData.add(jmuiMessage);
+            } else {
+                //说明是自己发出的文本消息
+                MyMessage jmuiMessage = new MyMessage(((TextContent) message.getContent()).getText(), SEND_TEXT);
+                jmuiMessage.setMessage(message);
+                jmuiMessage.setText(((TextContent) message.getContent()).getText());
+                jmuiMessage.setTimeString(TimeUtils.ms2date("MM-dd HH:mm", message.getCreateTime()));
+                jmuiMessage.setUserInfo(new DefaultUser(userInfo.getUserName(), userInfo.getDisplayName(), imgSend));
+                //收到消息时，添加到集合
+                mData.add(jmuiMessage);
+            }
+        } else if (message.getContent() instanceof VoiceContent) {
+            if (message.getFromUser().getUserName() != userInfo.getUserName()) {
+                //说明是接收的语音消息
+                final MyMessage jmuiMessage = new MyMessage("", RECEIVE_VOICE);
+                jmuiMessage.setMessage(message);
+                jmuiMessage.setDuration(((VoiceContent) message.getContent()).getDuration());
+                    ((VoiceContent) message.getContent()).downloadVoiceFile(message, new DownloadCompletionCallback() {
+                        @Override
+                        public void onComplete(int i, String s, File file) {
+                            if (i == 0) {
+                                jmuiMessage.setMediaFilePath(file.getPath());
+                                jmuiMessage.setTimeString(TimeUtils.ms2date("MM-dd HH:mm", message.getCreateTime()));
+                                jmuiMessage.setUserInfo(new DefaultUser(targetUserInfo.getUserName(), targetUserInfo.getDisplayName(), imgRecrive));
+                                //收到消息时，添加到集合
+                                mData.add(jmuiMessage);
+                            }
+                        }
+                    });
+            }else {
+                //说明是自己发出的语音消息
+                final MyMessage jmuiMessage = new MyMessage("", SEND_VOICE);
+                jmuiMessage.setMessage(message);
+                jmuiMessage.setDuration(((VoiceContent) message.getContent()).getDuration());
+                    ((VoiceContent) message.getContent()).downloadVoiceFile(message, new DownloadCompletionCallback() {
+                        @Override
+                        public void onComplete(int i, String s, File file) {
+                            if (i == 0) {
+                                jmuiMessage.setMediaFilePath(file.getPath());
+                                jmuiMessage.setTimeString(TimeUtils.ms2date("MM-dd HH:mm", message.getCreateTime()));
+                                jmuiMessage.setUserInfo(new DefaultUser(userInfo.getUserName(), userInfo.getDisplayName(), imgSend));
+                                //收到消息时，添加到集合
+                                mData.add(jmuiMessage);
+                            }
+                        }
+                    });
+            }
+        } else if (message.getContent() instanceof ImageContent) {
+            if (message.getFromUser().getUserName() != userInfo.getUserName()) {
+                //说明是接收的图片消息
+                final MyMessage jmuiMessage = new MyMessage("", RECEIVE_IMAGE);
+                jmuiMessage.setMessage(message);
+                jmuiMessage.setTimeString(TimeUtils.ms2date("MM-dd HH:mm", message.getCreateTime()));
+                jmuiMessage.setUserInfo(new DefaultUser(targetUserInfo.getUserName(), targetUserInfo.getDisplayName(), imgRecrive));
+                    //下载缩略图
+                    ((ImageContent) message.getContent()).downloadOriginImage(message, new DownloadCompletionCallback() {
+                        @Override
+                        public void onComplete(int i, String s, File file) {
+                            if (i == 0) {
+                                jmuiMessage.setMediaFilePath(file.getPath());
+                                mData.add(jmuiMessage);
+                            }
+                        }
+                    });
+            } else {
+                //说明是自己发出的图片消息
+                final MyMessage jmuiMessage = new MyMessage("", SEND_IMAGE);
+                jmuiMessage.setMessage(message);
+                jmuiMessage.setTimeString(TimeUtils.ms2date("MM-dd HH:mm", message.getCreateTime()));
+                jmuiMessage.setUserInfo(new DefaultUser(userInfo.getUserName(), userInfo.getDisplayName(), imgSend));
+                    //下载缩略图
+                    ((ImageContent) message.getContent()).downloadOriginImage(message, new DownloadCompletionCallback() {
+                        @Override
+                        public void onComplete(int i, String s, File file) {
+                            if (i == 0) {
+                                jmuiMessage.setMediaFilePath(file.getPath());
+                                mData.add(jmuiMessage);
+                            }
+                        }
+                    });
+                }
         }
     }
     private void init() {
@@ -780,12 +910,43 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
     public void closeChatActivity() {
         finish();
     }
+
+    @Override
+    public void clearHistory() {
+        MyAlertDialog dialog = new MyAlertDialog(this,
+                new String[]{"清空聊天记录", "清空并删除会话"}, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i) {
+                    case 0:
+                        //删除会话中的所有消息，但不会删除会话本身
+                        if (mConv.deleteAllMessage()) {
+                            mAdapter.clear();
+                            mData.clear();
+                            mAdapter.notifyDataSetChanged();
+                           Toast.makeText(ChatActivity.this,"清除记录成功",Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case 1:
+                        //删除会话中的所有消息，同时删除会话本身
+                        if (JMessageClient.deleteSingleConversation(getIntent().getStringExtra("username"))) {
+                            startActivity(new Intent(ChatActivity.this, MainActivity.class));
+                        }
+                        break;
+                }
+            }
+        });
+        dialog.initDialog(Gravity.RIGHT | Gravity.TOP);
+        dialog.dialogSize(200, 0, 0, 55);
+    }
+
     /**
      * 接收消息类事件
      *
      * @param event 消息事件
      */
     public void onEvent(MessageEvent event) {
+        Log.d("test", "onEvent: "+"收到");
         final Message msg = event.getMessage();
         Log.d("c", "onEvent: "+msg.getContent());
         //刷新消息
@@ -798,7 +959,7 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                     String targetId = userInfo.getUserName();
                     String appKey = userInfo.getAppKey();
                     //判断消息是否在当前会话中
-                    if (mIsSingle && targetId.equals(targetUserInfo.getUserName()) && appKey.equals(targetUserInfo.getAppKey())) {
+                    if (targetId.equals(targetUserInfo.getUserName()) && appKey.equals(targetUserInfo.getAppKey())) {
                         final MyMessage jmuiMessage;
                         if(msg.getContent()instanceof TextContent){
                             jmuiMessage = new MyMessage(((TextContent)msg.getContent()).getText(),RECEIVE_TEXT);
@@ -807,24 +968,34 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                             jmuiMessage.setTimeString(TimeUtils.ms2date("MM-dd HH:mm", msg.getCreateTime()));
                             jmuiMessage.setUserInfo(new DefaultUser(targetUserInfo.getUserName(), targetUserInfo.getDisplayName(),imgRecrive));
                             mAdapter.addToStart(jmuiMessage, true);
-                            //收到消息时，添加到集合
+                           //收到消息时，添加到集合
                             mData.add(jmuiMessage);
+                            mAdapter.notifyDataSetChanged();
                         }else if(msg.getContent()instanceof VoiceContent){
                             jmuiMessage = new MyMessage("",RECEIVE_VOICE);
                             jmuiMessage.setMessage(msg);
                             jmuiMessage.setDuration(((VoiceContent)msg.getContent()).getDuration());
-                            Log.d("c", "run: "+((VoiceContent)msg.getContent()).getLocalPath());
-                            jmuiMessage.setMediaFilePath(((VoiceContent)msg.getContent()).getLocalPath());
-                            jmuiMessage.setTimeString(TimeUtils.ms2date("MM-dd HH:mm", msg.getCreateTime()));
-                            jmuiMessage.setUserInfo(new DefaultUser(targetUserInfo.getUserName(), targetUserInfo.getDisplayName(),imgRecrive));
-                            mAdapter.updateMessage(jmuiMessage);
-                            //收到消息时，添加到集合
-                            mData.add(jmuiMessage);
+                            ((VoiceContent)msg.getContent()).downloadVoiceFile(msg, new DownloadCompletionCallback() {
+                                @Override
+                                public void onComplete(int i, String s, File file) {
+                                    if(i==0){
+                                        jmuiMessage.setMediaFilePath(file.getPath());
+                                        jmuiMessage.setTimeString(TimeUtils.ms2date("MM-dd HH:mm", msg.getCreateTime()));
+                                        jmuiMessage.setUserInfo(new DefaultUser(targetUserInfo.getUserName(), targetUserInfo.getDisplayName(),imgRecrive));
+                                        Log.d("c", "run: "+(jmuiMessage.getMediaFilePath()));
+                                        mAdapter.addToStart(jmuiMessage, true);
+                                        //收到消息时，添加到集合
+                                        mData.add(jmuiMessage);
+                                        mAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            });
                         }else if(msg.getContent()instanceof ImageContent){
                             jmuiMessage = new MyMessage("",RECEIVE_IMAGE);
                             jmuiMessage.setMessage(msg);
                             jmuiMessage.setTimeString(TimeUtils.ms2date("MM-dd HH:mm", msg.getCreateTime()));
                             jmuiMessage.setUserInfo(new DefaultUser(targetUserInfo.getUserName(), targetUserInfo.getDisplayName(),imgRecrive));
+                            //下载缩略图
                             ((ImageContent)msg.getContent()).downloadOriginImage(msg, new DownloadCompletionCallback() {
                                 @Override
                                 public void onComplete(int i, String s, File file) {
@@ -833,13 +1004,49 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                                         jmuiMessage.setMediaFilePath(file.getPath());
                                         Log.d("ccc", "run: "+jmuiMessage.getMediaFilePath());
                                         mAdapter.addToStart(jmuiMessage, true);
-                                        //收到消息时，添加到集合
+                                        mAdapter.updateMessage(jmuiMessage);
+                                       //收到消息时，添加到集合
                                         mData.add(jmuiMessage);
+                                        mAdapter.notifyDataSetChanged();
                                     }
                                 }
                             });
                         }
-                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
+    }
+    /*接收到撤回的消息*/
+    public void onEvent(MessageRetractEvent event) {
+        final Message message = event.getRetractedMessage();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < mData.size(); i++) {
+                    if (mData.get(i).getMessage().getServerMessageId()== message.getServerMessageId()) {
+                        if(mData.get(i).getType()==RECEIVE_TEXT) {
+                            mAdapter.delete(mData.get(i));
+                            MyMessage message1 = new MyMessage("[对方撤回了一条文本消息]", IMessage.MessageType.RECEIVE_TEXT);
+                            message1.setUserInfo(new DefaultUser(targetUserInfo.getUserName(), targetUserInfo.getDisplayName(),imgRecrive));
+                            mAdapter.addToStart(message1, true);
+                            mAdapter.notifyDataSetChanged();
+                            mAdapter.updateMessage(message1);
+                        }else if(mData.get(i).getType()==RECEIVE_IMAGE){
+                            mAdapter.delete(mData.get(i));
+                            MyMessage message1 = new MyMessage("[对方撤回了一条图片消息]", IMessage.MessageType.RECEIVE_TEXT);
+                            message1.setUserInfo(new DefaultUser(targetUserInfo.getUserName(), targetUserInfo.getDisplayName(),imgRecrive));
+                            mAdapter.addToStart(message1, true);
+                            mAdapter.notifyDataSetChanged();
+                            mAdapter.updateMessage(message1);
+                        }else if(mData.get(i).getType()==RECEIVE_VOICE){
+                            mAdapter.delete(mData.get(i));
+                            MyMessage message1 = new MyMessage("[对方撤回了一条语音消息]", IMessage.MessageType.RECEIVE_TEXT);
+                            message1.setUserInfo(new DefaultUser(targetUserInfo.getUserName(), targetUserInfo.getDisplayName(),imgRecrive));
+                            mAdapter.addToStart(message1, true);
+                            mAdapter.notifyDataSetChanged();
+                            mAdapter.updateMessage(message1);
+                        }
                     }
                 }
             }

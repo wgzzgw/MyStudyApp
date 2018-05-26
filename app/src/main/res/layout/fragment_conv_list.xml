@@ -13,7 +13,6 @@
         android:background="@color/jmui_jpush_blue">
 
         <TextView
-            android:id="@+id/main_title_bar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -22,7 +21,21 @@
             android:textColor="@android:color/white"
             android:textSize="18sp"/>
     </LinearLayout>
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="47dp">
+    <Button
+        android:id="@+id/search_conv"
+        android:layout_marginLeft="19dp"
+        android:layout_marginRight="19dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:gravity="center"
+        android:hint="搜索会话"
+        android:drawableLeft="@drawable/search1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@drawable/main_list_divider_line"
-            android:dividerHeight="0.3dp"
+            android:dividerHeight="0.5dp"
             android:headerDividersEnabled="false"/>
 
     </FrameLayout>

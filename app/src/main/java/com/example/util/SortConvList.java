@@ -13,10 +13,17 @@ import cn.jpush.im.android.api.model.Conversation;
 public class SortConvList implements Comparator<Conversation> {
     @Override
     public int compare(Conversation o, Conversation o2) {
-        if (o.getLatestMessage().getCreateTime()> o2.getLatestMessage().getCreateTime()) {
-            return -1;
-        } else if (o.getLatestMessage().getCreateTime() < o2.getLatestMessage().getCreateTime()) {
+        if (o.getLatestMessage() != null && o2.getLatestMessage() != null) {
+            if (o.getLatestMessage().getCreateTime() > o2.getLatestMessage().getCreateTime()) {
+                return -1;
+            } else if (o.getLatestMessage().getCreateTime() < o2.getLatestMessage().getCreateTime()) {
+                return 1;
+            }
+        }
+        if(o.getLatestMessage()==null&&o2.getLatestMessage()!=null){
             return 1;
+        }else if(o.getLatestMessage()!=null&&o2.getLatestMessage()==null){
+            return -1;
         }
         return 0;
     }

@@ -106,6 +106,8 @@ public class FriendInfoActivity extends BaseActivity  {
                                         @Override
                                         public void gotResult(int i, String s) {
                                             if(i==0){
+                                                //同时把会话也删除，下次登录见效
+                                                JMessageClient.deleteSingleConversation(mUserInfo.getUserName());
                                                 Toast.makeText(FriendInfoActivity.this,"删除好友成功！",Toast
                                                         .LENGTH_SHORT).show();
                                                 logoutDialog.destroy();

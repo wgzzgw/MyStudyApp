@@ -32,6 +32,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.R;
 import com.example.dialog.MyAlertDialog;
+import com.example.event.Event;
+import com.example.event.EventType;
 import com.example.message.DefaultUser;
 import com.example.message.MyMessage;
 import com.example.mystudyapp.MainActivity;
@@ -73,6 +75,7 @@ import cn.jpush.im.android.api.event.MessageRetractEvent;
 import cn.jpush.im.android.api.model.Conversation;
 import cn.jpush.im.android.api.model.Message;
 import cn.jpush.im.android.api.model.UserInfo;
+import cn.jpush.im.android.eventbus.EventBus;
 import cn.jpush.im.api.BasicCallback;
 
 import static cn.jiguang.imui.commons.models.IMessage.MessageType.RECEIVE_IMAGE;
@@ -346,6 +349,11 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
             mConv = Conversation.createSingleConversation(getIntent().getStringExtra("username"));
         }
         targetUserInfo=(UserInfo)mConv.getTargetInfo();
+        //通知会话列表添加会话
+        EventBus.getDefault().post(new Event.Builder()
+                .setType(EventType.createConversation)
+                .setConversation(mConv)
+                .build());
          /*
         * public abstract java.util.List<Message> getMessagesFromNewest(int offset,int limit)
         * 会话中消息按时间降序排列，从其中的offset位置，获取limit条数的消息.
@@ -590,6 +598,11 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                         public void gotResult(int status, String s) {
                             mAdapter.updateMessage(jmuiMessage);
                             if (status == 0) {
+                                //通知会话列表置顶此会话
+                                EventBus.getDefault().post(new Event.Builder()
+                                        .setType(EventType.sendmessage)
+                                        .setConversation(mConv)
+                                        .build());
                               Toast.makeText(ChatActivity.this,"成功发送语音",Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(ChatActivity.this,"发送语音失败",Toast.LENGTH_SHORT).show();
@@ -702,6 +715,11 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                                 public void gotResult(int status, String desc) {
                                     mAdapter.updateMessage(jmuiMessage);
                                     if (status == 0) {
+                                        //通知会话列表置顶此会话
+                                        EventBus.getDefault().post(new Event.Builder()
+                                                .setType(EventType.sendmessage)
+                                                .setConversation(mConv)
+                                                .build());
                                        Toast.makeText(ChatActivity.this,"发送文件成功",Toast.LENGTH_SHORT).show();
                                     } else {
                                         Toast.makeText(ChatActivity.this,"发送文件失败",Toast.LENGTH_SHORT).show();
@@ -896,6 +914,11 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
             @Override
             public void gotResult(int i, String s) {
                 if (i == 0) {
+                    //通知会话列表置顶此会话
+                    EventBus.getDefault().post(new Event.Builder()
+                            .setType(EventType.sendmessage)
+                            .setConversation(mConv)
+                            .build());
                     mAdapter.addToStart(myMessage, true);
                     mChatView.getChatInputView().getInputView().setText("");
                 } else {
@@ -908,7 +931,7 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
 
     @Override
     public void closeChatActivity() {
-        finish();
+        returnBtn();
     }
 
     @Override
@@ -928,6 +951,11 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                         }
                         break;
                     case 1:
+                        //通知会话列表删除会话
+                        EventBus.getDefault().post(new Event.Builder()
+                                .setType(EventType.deleteConversation)
+                                .setConversation(mConv)
+                                .build());
                         //删除会话中的所有消息，同时删除会话本身
                         if (JMessageClient.deleteSingleConversation(getIntent().getStringExtra("username"))) {
                             startActivity(new Intent(ChatActivity.this, MainActivity.class));
@@ -971,6 +999,11 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                            //收到消息时，添加到集合
                             mData.add(jmuiMessage);
                             mAdapter.notifyDataSetChanged();
+                            //通知会话列表置顶此会话
+                            EventBus.getDefault().post(new Event.Builder()
+                                    .setType(EventType.sendmessage)
+                                    .setConversation(mConv)
+                                    .build());
                         }else if(msg.getContent()instanceof VoiceContent){
                             jmuiMessage = new MyMessage("",RECEIVE_VOICE);
                             jmuiMessage.setMessage(msg);
@@ -987,6 +1020,11 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                                         //收到消息时，添加到集合
                                         mData.add(jmuiMessage);
                                         mAdapter.notifyDataSetChanged();
+                                        //通知会话列表置顶此会话
+                                        EventBus.getDefault().post(new Event.Builder()
+                                                .setType(EventType.sendmessage)
+                                                .setConversation(mConv)
+                                                .build());
                                     }
                                 }
                             });
@@ -1008,6 +1046,11 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                                        //收到消息时，添加到集合
                                         mData.add(jmuiMessage);
                                         mAdapter.notifyDataSetChanged();
+                                        //通知会话列表置顶此会话
+                                        EventBus.getDefault().post(new Event.Builder()
+                                                .setType(EventType.sendmessage)
+                                                .setConversation(mConv)
+                                                .build());
                                     }
                                 }
                             });
@@ -1051,5 +1094,16 @@ public class ChatActivity extends AppCompatActivity  implements ChatView.OnSizeC
                 }
             }
         });
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        returnBtn();
+    }
+    private void returnBtn() {
+        //重置会话的未读数—服务端
+        mConv.resetUnreadCount();
+        JMessageClient.exitConversation();
+        finish();
     }
 }
